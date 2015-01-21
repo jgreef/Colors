@@ -1,6 +1,7 @@
 # Colors
 Milestones:
 1) Clean up/rewrite code from colors prototype to allow easier additions
+
 2) Implement genetic selection algorithm
   a) add a way to save cellular automata rulesets
   b) create an algorithm to combine parent rulesets into children
