@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1411254338 source:c:\users\llamanaru\programming\colors\01_hello_sdl.cpp
+	<SDL2/SDL.h>
+	<stdio.h>
+
+1413970513 source:c:\users\llamanaru\programming\colors\main.cpp
+	<iostream>
+	<time.h>
+	<SDL2/SDL.h>
+
+1415406097 source:c:\users\llamanaru\programming\coloras\colors\main.cpp
+	<iostream>
+	<time.h>
+	<SDL2/SDL.h>
+
