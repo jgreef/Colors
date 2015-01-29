@@ -2,8 +2,6 @@
 //  main.m
 //  Colors
 //
-//  Created by Christine Cheng on 7/20/14.
-//  Copyright (c) 2014 Christine Cheng. All rights reserved.
 //
 #include <iostream>
 #include <time.h>
