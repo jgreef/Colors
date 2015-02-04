@@ -3,13 +3,34 @@
 	<SDL2/SDL.h>
 	<stdio.h>
 
-1422488528 source:c:\users\llamanaru\programming\colors\main.cpp
+1423092929 source:c:\users\llamanaru\programming\colors\main.cpp
 	<iostream>
 	<time.h>
 	<SDL2/SDL.h>
+	"board.h"
+	"screen.h"
 
 1415406097 source:c:\users\llamanaru\programming\coloras\colors\main.cpp
 	<iostream>
 	<time.h>
 	<SDL2/SDL.h>
+
+1423091589 source:c:\users\llamanaru\programming\colors\board.cpp
+	"board.h"
+
+1423091264 c:\users\llamanaru\programming\colors\board.h
+	<stdlib.h>
+	"info.h"
+
+1423085174 c:\users\llamanaru\programming\colors\info.h
+
+1423090314 source:c:\users\llamanaru\programming\colors\screen.cpp
+	"screen.h"
+
+1423090190 c:\users\llamanaru\programming\colors\screen.h
+	<SDL2/SDL.h>
+	<stdlib.h>
+	<iostream>
+	"info.h"
+	"board.h"
 

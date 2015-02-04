@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1423052732 source:c:\users\llamanaru\programming\colors\genetics\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	"RuleGenerator.h"
+
+1423053114 c:\users\llamanaru\programming\colors\genetics\include\rulegenerator.h
+	<algorithm>
+	<vector>
+	<ctime>
+	<cstdlib>
+	<iostream>
+
+1423053767 source:c:\users\llamanaru\programming\colors\genetics\src\rulegenerator.cpp
+	"RuleGenerator.h"
+
