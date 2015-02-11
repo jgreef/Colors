@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "info.h"
+#include "RuleGenerator.h"
 
 class Board {
     private:
@@ -15,6 +16,7 @@ class Board {
         int num_gliders;
         bool changing_background;
         bool pause;
+        RuleGenerator gen;
 
         void set_rules_to_life();
     public:
@@ -24,17 +26,25 @@ class Board {
         void init_quadrants();
         void init_center_dot();
         void init_gliders();
+
         void make_glider(int x, int y, int orientation);
         void clear_board();
+
         void update_board();
         int get_num_alive_neighbors(int x, int y);
+
         void update_colors();
+
         int* get_board();
+
         void randomize_rules();
         void set_density(int new_density);
         void modify_gliders(int factor);
         void toggle_changing_background();
         void toggle_pause();
+
+        void rules_pretty();
+        void rules_not_pretty();
 };
 
 

@@ -3,7 +3,7 @@
 	<SDL2/SDL.h>
 	<stdio.h>
 
-1423092929 source:c:\users\llamanaru\programming\colors\main.cpp
+1423693087 source:c:\users\llamanaru\programming\colors\main.cpp
 	<iostream>
 	<time.h>
 	<SDL2/SDL.h>
@@ -15,12 +15,13 @@
 	<time.h>
 	<SDL2/SDL.h>
 
-1423091589 source:c:\users\llamanaru\programming\colors\board.cpp
+1423692603 source:c:\users\llamanaru\programming\colors\board.cpp
 	"board.h"
 
-1423091264 c:\users\llamanaru\programming\colors\board.h
+1423691751 c:\users\llamanaru\programming\colors\board.h
 	<stdlib.h>
 	"info.h"
+	"RuleGenerator.h"
 
 1423085174 c:\users\llamanaru\programming\colors\info.h
 
@@ -33,4 +34,14 @@
 	<iostream>
 	"info.h"
 	"board.h"
+
+1423692636 source:c:\users\llamanaru\programming\colors\rulegenerator.cpp
+	"RuleGenerator.h"
+
+1423692069 c:\users\llamanaru\programming\colors\rulegenerator.h
+	<algorithm>
+	<deque>
+	<ctime>
+	<cstdlib>
+	<iostream>
 

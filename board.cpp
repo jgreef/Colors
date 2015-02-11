@@ -1,11 +1,11 @@
 
 #include "board.h"
 
-Board::Board() {
+Board::Board() : gen(20) {
     board = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
     board_buffer = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
-    born = (int*)malloc(sizeof(int) * 9);
-    stay_alive = (int*)malloc(sizeof(int) * 9);
+    born = (int*)malloc(sizeof(int) * 18);
+    stay_alive = (born+9);
     density = 50;
     num_gliders = 4;
     changing_background = true;
@@ -128,6 +128,7 @@ void Board::update_board() {
     //if we're paused, just update the colors
     if(pause) {
         update_colors();
+        return;
     }
 
     //if a cell is positive it's alive, if it's negative or 0 then it's dead.
@@ -235,10 +236,9 @@ void Board::set_rules_to_life() {
     int life_stay_alive[9] = {0,0,1,1,0,0,0,0,0};
 
     free(born);
-    free(stay_alive);
 
-    born = (int*)malloc(sizeof(int) * 9);
-    stay_alive = (int*)malloc(sizeof(int) * 9);
+    born = (int*)malloc(sizeof(int) * 18);
+    stay_alive = (born + 9);
 
 
     for(int i = 0; i < 9; i++) {
@@ -275,3 +275,16 @@ void Board::toggle_pause() {
     pause = !pause;
 }
 
+void Board::rules_pretty() {
+    gen.add_seed(born);
+    born = gen.generate_one_mean();
+    stay_alive = (born + 9);
+    init_center_dot();
+}
+
+void Board::rules_not_pretty() {
+    free(born);
+    born = gen.generate_one_mean();
+    stay_alive = (born + 9);
+    init_center_dot();
+}

@@ -147,6 +147,14 @@ bool do_user_input(Board *board, Screen *screen) {
                     case SDLK_F12:
                         screen->set_color_speed_divisor(67);
                         break;
+                    case SDLK_EQUALS:
+                        board->rules_pretty();
+                        screen->reset_colors();
+                        break;
+                    case SDLK_MINUS:
+                        board->rules_not_pretty();
+                        screen->reset_colors();
+                        break;
 
                 }
         }

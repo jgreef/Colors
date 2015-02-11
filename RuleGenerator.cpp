@@ -2,8 +2,9 @@
 
 
 
-RuleGenerator::RuleGenerator()
+RuleGenerator::RuleGenerator(unsigned int new_max_seeds)
 {
+    max_seeds = new_max_seeds;
 }
 
 RuleGenerator::~RuleGenerator()
@@ -37,6 +38,10 @@ int* RuleGenerator::generate_one_mean() {
 
 void RuleGenerator::add_seed(int* seed) {
     seeds.push_back(seed);
+    if(seeds.size() > max_seeds) {
+        free(seeds.front());
+        seeds.pop_front();
+    }
 }
 
 void RuleGenerator::print_seeds() {
