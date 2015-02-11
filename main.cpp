@@ -55,6 +55,11 @@ bool do_user_input(Board *board, Screen *screen) {
                         board->randomize_rules();
                         screen->reset_colors();
                         break;
+                    //randomizes the cellular automata ruleset with nondeterministic behavior
+                    case SDLK_r:
+                        board->randomize_rules_non_deterministic();
+                        screen->reset_colors();
+                        break;
                     //draws num_gliders/4 dots of side length density/10 symmetrically in each quadrant
                     case SDLK_e:
                         board->init_quadrants();
@@ -165,7 +170,6 @@ bool do_user_input(Board *board, Screen *screen) {
 
 int main(int argc, char * arg[])
 {
-
     srand (time(NULL));
 
     Board board;
@@ -175,13 +179,15 @@ int main(int argc, char * arg[])
 
     bool running = true;
     while(running) {
-        running = do_user_input(&board, &screen);
         //translate board to pixels
         screen.draw_board();
         //and draw it
         screen.update_window();
 
         board.update_board();
+
+        running = do_user_input(&board, &screen);
+
     }
 
     //return (this deconstructs screen and board and thus cleans up everything)

@@ -1,16 +1,19 @@
 
 #include "board.h"
 
-Board::Board() : gen(20) {
+Board::Board() : gen(20), e2(time(NULL)), dist(0, 1) {
     board = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
     board_buffer = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
-    born = (int*)malloc(sizeof(int) * 18);
+    born = (double*)malloc(sizeof(double) * 18);
     stay_alive = (born+9);
     density = 50;
     num_gliders = 4;
     changing_background = true;
     pause = false;
     set_rules_to_life();
+
+
+
 }
 
 
@@ -145,7 +148,7 @@ void Board::update_board() {
             //if dead
             if(board[j*CELL_WIDTH+i] <= 0) {
                 //if supposed to be born
-                if(born[neighbors] == 1)
+                if(born[neighbors] >= dist(e2))
                     // then make it alive with an age of 1
                     board_buffer[j*CELL_WIDTH+i] = 1;
                 //if its still dead
@@ -160,7 +163,7 @@ void Board::update_board() {
             //if alive
             else {
                 //and it's supposed to stay alive, and it's not older than the max age
-                if(stay_alive[neighbors])
+                if(stay_alive[neighbors] >= dist(e2))
                     //then age it
                     board_buffer[j*CELL_WIDTH+i] = board[j*CELL_WIDTH+i] + 1;
                 else
@@ -237,7 +240,7 @@ void Board::set_rules_to_life() {
 
     free(born);
 
-    born = (int*)malloc(sizeof(int) * 18);
+    born = (double*)malloc(sizeof(double) * 18);
     stay_alive = (born + 9);
 
 
@@ -255,6 +258,14 @@ int* Board::get_board() {
 void Board::randomize_rules() {
     for(int i = 0; i < 9; i++) {
         born[i] = (rand()%100>20 ? 1 : 0);
+        stay_alive[i] = (rand()%100>20 ? 1 : 0);
+    }
+}
+
+void Board::randomize_rules_non_deterministic() {
+    std::normal_distribution<> ndist(0.5, 0.3);
+    for(int i = 0; i < 9; i++) {
+        born[i] = (rand()%100>20 ? ndist(e2) : 0);
         stay_alive[i] = (rand()%100>20 ? 1 : 0);
     }
 }

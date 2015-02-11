@@ -4,6 +4,9 @@ q:                      Quits simulation
 
 d:                      randomizes the rule set and randomizes the starting colors
 
+r:                      randomizes the rule set with non-deterministic behaviour and randomizes the 
+                        starting colors
+
 x:                      randomizes only the starting colors
                         
 c:                      toggles whether the sim draws black and white or colors

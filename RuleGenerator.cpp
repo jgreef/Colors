@@ -12,14 +12,14 @@ RuleGenerator::~RuleGenerator()
     //dtor
 }
 
-int* RuleGenerator::generate_one_mean() {
+double* RuleGenerator::generate_one_mean() {
     double probabilities[18];
-    int *to_return = (int*) malloc(sizeof(int) * 18);
+    double *to_return = (double*) malloc(sizeof(double) * 18);
     for(int i = 0; i < 18; i++) {
         probabilities[i] = 0;
     }
 
-    for(std::deque<int*>::iterator it = seeds.begin(); it != seeds.end(); it++) {
+    for(std::deque<double*>::iterator it = seeds.begin(); it != seeds.end(); it++) {
         for(int k = 0; k < 18; k++) {
             probabilities[k] += (*it)[k];
         }
@@ -36,7 +36,7 @@ int* RuleGenerator::generate_one_mean() {
     return to_return;
 }
 
-void RuleGenerator::add_seed(int* seed) {
+void RuleGenerator::add_seed(double* seed) {
     seeds.push_back(seed);
     if(seeds.size() > max_seeds) {
         free(seeds.front());
@@ -45,12 +45,12 @@ void RuleGenerator::add_seed(int* seed) {
 }
 
 void RuleGenerator::print_seeds() {
-    for(std::deque<int*>::iterator it = seeds.begin(); it != seeds.end(); it++) {
+    for(std::deque<double*>::iterator it = seeds.begin(); it != seeds.end(); it++) {
         print_array(*it);
     }
 }
 
-void RuleGenerator::print_array(int *to_print) {
+void RuleGenerator::print_array(double *to_print) {
     std::cout << "[ ";
     for(int i = 0; i < 18; i++) {
         std::cout << to_print[i] << " ";
