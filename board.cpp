@@ -263,10 +263,10 @@ void Board::randomize_rules() {
 }
 
 void Board::randomize_rules_non_deterministic() {
-    std::normal_distribution<> ndist(0.5, 0.3);
+    std::normal_distribution<> ndist(0.0, 0.3);
     for(int i = 0; i < 9; i++) {
         born[i] = (rand()%100>20 ? ndist(e2) : 0);
-        stay_alive[i] = (rand()%100>20 ? 1 : 0);
+        stay_alive[i] = (rand()%100>10 ? 1 : 0);
     }
 }
 
