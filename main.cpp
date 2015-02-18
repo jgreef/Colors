@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 #include "board.h"
 #include "screen.h"
+#include "RuleGenerator.h"
 
 
 //this function checks if there is user input and reacts accordingly
@@ -160,6 +161,14 @@ bool do_user_input(Board *board, Screen *screen) {
                         board->rules_not_pretty();
                         screen->reset_colors();
                         break;
+                    case SDLK_LEFTBRACKET:
+                        board->rules_not_pretty_float();
+                        screen->reset_colors();
+                        break;
+                    case SDLK_RIGHTBRACKET:
+                        board->rules_pretty_float();
+                        screen->reset_colors();
+                        break;
 
                 }
         }
@@ -168,10 +177,26 @@ bool do_user_input(Board *board, Screen *screen) {
 }
 
 
+void teststuff() {
+    RuleGenerator gen(20);
+
+    double *seed = (double*) malloc(18*sizeof(double));
+    for(int i = 0; i < 18; i++) {
+        seed[i] = 1;
+    }
+    gen.print_array(seed);
+    gen.add_seed(seed);
+    seed = gen.generate_one_mean_float();
+    gen.print_array(seed);
+    return;
+}
+
 int main(int argc, char * arg[])
 {
     srand (time(NULL));
 
+    //teststuff();
+    //return 0;
     Board board;
     Screen screen(&board);
 

@@ -36,6 +36,35 @@ double* RuleGenerator::generate_one_mean() {
     return to_return;
 }
 
+double* RuleGenerator::generate_one_mean_float() {
+    double probabilities[18];
+    double *to_return = (double*) malloc(sizeof(double) * 18);
+    for(int i = 0; i < 18; i++) {
+        probabilities[i] = 0;
+    }
+
+    for(std::deque<double*>::iterator it = seeds.begin(); it != seeds.end(); it++) {
+        for(int k = 0; k < 18; k++) {
+            probabilities[k] += (*it)[k];
+        }
+    }
+
+    for(int i = 0; i < 18; i++) {
+        probabilities[i] = probabilities[i] / seeds.size();
+    }
+
+    int i;
+    for(i = 0; i < 9; i++) {
+        to_return[i] = probabilities[i] + ((random_double() < 0.5) ? -0.1 : 0.1);
+    }
+
+    for(; i < 18; i++) {
+        to_return[i] = probabilities[i] >= (random_double() - 0.1) ? 1 : 0;
+    }
+
+    return to_return;
+}
+
 void RuleGenerator::add_seed(double* seed) {
     seeds.push_back(seed);
     if(seeds.size() > max_seeds) {

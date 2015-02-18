@@ -3,22 +3,23 @@
 	<SDL2/SDL.h>
 	<stdio.h>
 
-1423698123 source:c:\users\llamanaru\programming\colors\main.cpp
+1424297330 source:c:\users\llamanaru\programming\colors\main.cpp
 	<iostream>
 	<time.h>
 	<SDL2/SDL.h>
 	"board.h"
 	"screen.h"
+	"RuleGenerator.h"
 
 1415406097 source:c:\users\llamanaru\programming\coloras\colors\main.cpp
 	<iostream>
 	<time.h>
 	<SDL2/SDL.h>
 
-1423699109 source:c:\users\llamanaru\programming\colors\board.cpp
+1424296237 source:c:\users\llamanaru\programming\colors\board.cpp
 	"board.h"
 
-1423698171 c:\users\llamanaru\programming\colors\board.h
+1424295361 c:\users\llamanaru\programming\colors\board.h
 	<stdlib.h>
 	<random>
 	<time.h>
@@ -27,7 +28,7 @@
 
 1423085174 c:\users\llamanaru\programming\colors\info.h
 
-1423090314 source:c:\users\llamanaru\programming\colors\screen.cpp
+1424297002 source:c:\users\llamanaru\programming\colors\screen.cpp
 	"screen.h"
 
 1423090190 c:\users\llamanaru\programming\colors\screen.h
@@ -37,10 +38,10 @@
 	"info.h"
 	"board.h"
 
-1423697650 source:c:\users\llamanaru\programming\colors\rulegenerator.cpp
+1424297307 source:c:\users\llamanaru\programming\colors\rulegenerator.cpp
 	"RuleGenerator.h"
 
-1423697608 c:\users\llamanaru\programming\colors\rulegenerator.h
+1424297237 c:\users\llamanaru\programming\colors\rulegenerator.h
 	<algorithm>
 	<deque>
 	<ctime>

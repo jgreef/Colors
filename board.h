@@ -52,6 +52,9 @@ class Board {
 
         void rules_pretty();
         void rules_not_pretty();
+
+        void rules_pretty_float();
+        void rules_not_pretty_float();
 };
 
 

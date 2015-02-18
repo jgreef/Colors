@@ -13,13 +13,14 @@ class RuleGenerator
         RuleGenerator(unsigned int new_max_seeds);
         virtual ~RuleGenerator();
         double* generate_one_mean();
+        double* generate_one_mean_float();
         void add_seed(double* seed);
         void print_seeds();
+        void print_array(double *to_print);
     protected:
     private:
         unsigned int max_seeds;
         std::deque<double*> seeds;
-        void print_array(double *to_print);
         double random_double();
 };
 

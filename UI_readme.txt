@@ -47,3 +47,7 @@ Arrow Right/Left:       increases/decreases the number of gliders to generate by
 +/=:                    Current ruleset is pretty, add it to the seeds and generate new rules
 
 -/_:                    Current ruleset is not pretty, destroy it and generate new rules
+
+[:			Same as - but for nondeterministic life
+
+]: 			Same as + but for nondeterministic life

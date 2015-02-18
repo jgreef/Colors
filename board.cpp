@@ -1,7 +1,7 @@
 
 #include "board.h"
 
-Board::Board() : gen(20), e2(time(NULL)), dist(0, 1) {
+Board::Board() : gen(8), e2(time(NULL)), dist(0, 1) {
     board = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
     board_buffer = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
     born = (double*)malloc(sizeof(double) * 18);
@@ -296,6 +296,20 @@ void Board::rules_pretty() {
 void Board::rules_not_pretty() {
     free(born);
     born = gen.generate_one_mean();
+    stay_alive = (born + 9);
+    init_center_dot();
+}
+
+void Board::rules_pretty_float() {
+    gen.add_seed(born);
+    born = gen.generate_one_mean_float();
+    stay_alive = (born + 9);
+    init_center_dot();
+}
+
+void Board::rules_not_pretty_float() {
+    free(born);
+    born = gen.generate_one_mean_float();
     stay_alive = (born + 9);
     init_center_dot();
 }
