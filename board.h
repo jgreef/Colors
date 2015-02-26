@@ -21,9 +21,11 @@ class Board {
         bool pause;
         RuleGenerator gen;
 
+
         std::mt19937 e2;
         std::uniform_real_distribution<double> dist;
 
+        int* get_circle(int x, int y, int r);
         void set_rules_to_life();
     public:
         Board();
@@ -32,6 +34,7 @@ class Board {
         void init_quadrants();
         void init_center_dot();
         void init_gliders();
+        void init_circle();
 
         void make_glider(int x, int y, int orientation);
         void clear_board();

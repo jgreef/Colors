@@ -51,6 +51,14 @@ bool do_user_input(Board *board, Screen *screen) {
                     case SDLK_SPACE:
                         board->init_board();
                         break;
+                    //clears the board
+                    case SDLK_z:
+                        board->clear_board();
+                        break;
+                    //adds a circle to the board
+                    case SDLK_o:
+                        board->init_circle();
+                        break;
                     //randomizes the cellular automata ruleset
                     case SDLK_d:
                         board->randomize_rules();
@@ -198,6 +206,8 @@ int main(int argc, char * arg[])
     //teststuff();
     //return 0;
     Board board;
+    board.init_circle();
+    //return 0;
     Screen screen(&board);
 
     board.init_board();

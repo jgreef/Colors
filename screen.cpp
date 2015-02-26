@@ -17,7 +17,7 @@ Screen::Screen(Board *new_board) {
                                            SDL_WINDOWPOS_CENTERED,     // y position, centered
                                            SCREEN_WIDTH,               // width, in pixels
                                            SCREEN_HEIGHT,              // height, in pixels
-                                           SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN          // flags
+                                           SDL_WINDOW_FULLSCREEN          // flags
                                            );
     //SDL_GetWindowSize(window, &screen_width, &screen_height);
 

@@ -115,6 +115,21 @@ void Board::make_glider(int x, int y, int orientation) {
     }
 }
 
+void Board::init_circle() {
+    int* circle_coords = get_circle(rand()%CELL_WIDTH, rand()%CELL_HEIGHT-10, rand()%30+3);
+    int index = 0;
+    int i, j;
+    while(circle_coords[index] != -1) {
+        i = circle_coords[index];
+        index++;
+        j = circle_coords[index];
+        index++;
+
+        board[j*CELL_WIDTH+i] = 1;
+    }
+}
+
+
 //clears the board. If changing_background is true sets everything to -1
 //so it will age, otherwise sets it to 0 so it won't
 void Board::clear_board() {
@@ -260,6 +275,7 @@ void Board::randomize_rules() {
         born[i] = (rand()%100>20 ? 1 : 0);
         stay_alive[i] = (rand()%100>20 ? 1 : 0);
     }
+
 }
 
 void Board::randomize_rules_non_deterministic() {
@@ -312,4 +328,37 @@ void Board::rules_not_pretty_float() {
     born = gen.generate_one_mean_float();
     stay_alive = (born + 9);
     init_center_dot();
+}
+
+int* Board::get_circle(int x, int y, int r) {
+    int *to_return = (int*) malloc(sizeof(int) * r * r * 4 * 2); //approximate pi*r*r
+    int index = 0;
+    int test_x, test_y;
+    int rsquared = r*r;
+    for(int i = -r; i <= r; i++) {
+        for(int j = -r; j <= r; j++) {
+            test_x = i + x;
+            test_y = j + y;
+            if(test_x < 0)
+                test_x += CELL_WIDTH;
+            else if(test_x >= CELL_WIDTH)
+                test_x -= -CELL_WIDTH;
+
+            if(test_y < 0)
+                test_y += CELL_HEIGHT;
+            else if(test_y >= CELL_HEIGHT)
+                test_y -= CELL_HEIGHT;
+
+
+            if(i * i + j * j <= rsquared) {
+                to_return[index] = test_x;
+                index++;
+                to_return[index] = test_y;
+                index++;
+            }
+
+        }
+    }
+    to_return[index] = -1;
+    return to_return;
 }
