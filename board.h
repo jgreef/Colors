@@ -26,7 +26,6 @@ class Board {
         std::uniform_real_distribution<double> dist;
 
         int* get_circle(int x, int y, int r);
-        void set_rules_to_life();
     public:
         Board();
         ~Board();
@@ -46,6 +45,7 @@ class Board {
 
         int* get_board();
 
+        void set_rules_to_life();
         void randomize_rules();
         void randomize_rules_non_deterministic();
         void set_density(int new_density);

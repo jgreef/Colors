@@ -7,6 +7,8 @@ d:                      randomizes the rule set and randomizes the starting colo
 r:                      randomizes the rule set with non-deterministic behaviour and randomizes the 
                         starting colors
 
+l:                      sets the rules to game of life
+
 x:                      randomizes only the starting colors
                         
 c:                      toggles whether the sim draws black and white or colors
@@ -27,6 +29,10 @@ e:                      inits $num_gliders/4 squares of side length $density/10 
                         with vertical and horizontal symmetry
 
 a:                      initializes a board with a center square of side length $density/10
+
+z:                      clears the board
+
+o:                      places a random circle on the board without clearing it
 
 
 ------------------------------- Parameter Changes -------------------------------

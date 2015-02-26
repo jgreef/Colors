@@ -69,6 +69,11 @@ bool do_user_input(Board *board, Screen *screen) {
                         board->randomize_rules_non_deterministic();
                         screen->reset_colors();
                         break;
+                    //changes rules to life
+                    case SDLK_l:
+                        board->set_rules_to_life();
+                        screen->reset_colors();
+                        break;
                     //draws num_gliders/4 dots of side length density/10 symmetrically in each quadrant
                     case SDLK_e:
                         board->init_quadrants();
