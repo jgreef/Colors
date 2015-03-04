@@ -94,6 +94,18 @@ bool do_user_input(Board *board, Screen *screen) {
                     case SDLK_v:
                         board->toggle_changing_background();
                         break;
+                    case SDLK_k:
+                        board->init_smooth_life();
+                        break;
+                    //set board to normal automata
+                    case SDLK_n:
+                        board->set_update_algorithm(0);
+                        break;
+                    //set board to smooth automata
+                    case SDLK_m:
+                        board->set_update_algorithm(1);
+                        board->init_smooth_life();
+                        break;
                     // this changes the density of live cells that random scenes
                     // are generated with-> The integer is the percent alive cells
                     case SDLK_0:
@@ -207,6 +219,7 @@ void teststuff() {
 int main(int argc, char * arg[])
 {
     srand (time(NULL));
+
 
     //teststuff();
     //return 0;

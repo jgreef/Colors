@@ -11,7 +11,7 @@ Board::Board() : gen(8), e2(time(NULL)), dist(0, 1) {
     changing_background = true;
     pause = false;
     set_rules_to_life();
-
+    update_algorithm = 0;
 
 
 }
@@ -66,6 +66,14 @@ void Board::init_center_dot() {
     for(int i = (CELL_WIDTH - s)/2; i < (CELL_WIDTH + s)/2; i++ ) {
         for(int j = (CELL_HEIGHT - s)/2; j < (CELL_HEIGHT + s)/2; j++ ) {
             board[j*CELL_WIDTH+i] = 1;
+        }
+    }
+}
+
+void Board::init_smooth_life() {
+    for(int i = 0; i < CELL_WIDTH; i++) {
+        for(int j = 0; j < CELL_HEIGHT; j++) {
+            board[j*CELL_WIDTH+i] = (rand()%100 < density ? SMOOTH_MAX : 0);
         }
     }
 }
@@ -140,9 +148,87 @@ void Board::clear_board() {
     }
 }
 
+
 //this function updates the board according to the ruleset
 void Board::update_board() {
+    switch(update_algorithm) {
+        case 0:
+            update_board_normal();
+            break;
+        case 1:
+            update_board_smooth();
+            break;
+    }
 
+    //free our old board
+    free(board);
+    //put the buffer into the spotlight
+    board = board_buffer;
+    //and get a new buffer
+    board_buffer = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
+}
+
+void Board::update_board_smooth() {
+    long n, m;
+    int *points, x, y, num_n, num_m;
+    //iterate over every cell
+    for(int j = 0; j < CELL_HEIGHT; j++) {
+        for(int i = 0; i < CELL_WIDTH; i++) {
+            points = get_circle(i, j, R_I);
+            x = 0;
+            y = 1;
+            n = 0;
+            num_n = 0;
+            while(points[x] != -1) {
+                n += board[points[y]*CELL_WIDTH+points[x]];
+                num_n ++;
+                x += 2;
+                y += 2;
+            }
+            free(points);
+            points = get_circle(i, j, R_A);
+            x = 0;
+            y = 1;
+            m = 0;
+            num_m = 0;
+            while(points[x] != -1) {
+                m += board[points[y]*CELL_WIDTH+points[x]];
+                num_m ++;
+                x += 2;
+                y += 2;
+            }
+            free(points);
+            m = m - n;
+            num_m = num_m - num_n;
+            n = n / num_n;
+            m = m / num_m;
+            board_buffer[j*CELL_WIDTH+i] = s(n, m);
+        }
+    }
+
+
+}
+
+long Board::s1(long x, long a) {
+    long to_return = (SMOOTH_MAX * (SMOOTH_MAX + 1))/(SMOOTH_MAX + pow(E_FIXED, (a-x) * 4));
+    return to_return;
+}
+long Board::s2(long x, long a, long b) {
+    long to_return = s1(x, a) * (SMOOTH_MAX - s1(x, b));
+    return to_return;
+}
+long Board::sm(long x, long y, long m) {
+    long to_return = x * (SMOOTH_MAX - s1(m, SMOOTH_MAX/2)) + y * s1(m, SMOOTH_MAX/2);
+    return to_return;
+}
+long Board::s(long n, long m) {
+    long to_return = s2(n, sm(B1, D1, m), sm(B2, D2, m));
+    return to_return;
+}
+
+
+
+void Board::update_board_normal() {
     //if we're paused, just update the colors
     if(pause) {
         update_colors();
@@ -189,12 +275,7 @@ void Board::update_board() {
         }
     }
 
-    //free our old board
-    free(board);
-    //put the buffer into the spotlight
-    board = board_buffer;
-    //and get a new buffer
-    board_buffer = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
+
 }
 
 //this gets the number of alive neighbors, wraps around edges so our real shape
@@ -290,6 +371,10 @@ void Board::set_density(int new_density) {
     density = new_density;
 }
 
+void Board::set_update_algorithm(int new_algorithm) {
+    update_algorithm = new_algorithm;
+}
+
 void Board::modify_gliders(int factor) {
     num_gliders += factor;
 }
@@ -342,7 +427,7 @@ int* Board::get_circle(int x, int y, int r) {
             if(test_x < 0)
                 test_x += CELL_WIDTH;
             else if(test_x >= CELL_WIDTH)
-                test_x -= -CELL_WIDTH;
+                test_x -= CELL_WIDTH;
 
             if(test_y < 0)
                 test_y += CELL_HEIGHT;
