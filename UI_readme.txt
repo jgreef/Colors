@@ -18,6 +18,10 @@ v:                      toggles whether to have the background change color if i
                         
 Left Shift:             pauses the simulation but keeps changing the colors
 
+n:                      sets the simulation to normal automata mode
+
+m:                      sets the simulation to smooth mode
+
                         
 ----------------------------- Board Initializations -----------------------------
 
@@ -33,6 +37,8 @@ a:                      initializes a board with a center square of side length 
 z:                      clears the board
 
 o:                      places a random circle on the board without clearing it
+
+j:                      initializes a random board for smooth life
 
 
 ------------------------------- Parameter Changes -------------------------------
