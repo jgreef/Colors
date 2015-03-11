@@ -8,6 +8,16 @@ Board::Board() : gen(8), e2(time(NULL)), dist(0, 1) {
     board_buffer_float = (double*)malloc(sizeof(double) * CELL_WIDTH * CELL_HEIGHT);
     born = (double*)malloc(sizeof(double) * 18);
     stay_alive = (born+9);
+
+    r_i = R_I;
+    r_a = R_A;
+    alpha_n = ALPHA_N;
+    alpha_m = ALPHA_M;
+    b1 = B1;
+    b2 = B2;
+    d1 = D1;
+    d2 = D2;
+
     density = 50;
     num_gliders = 4;
     changing_background = true;
@@ -175,12 +185,12 @@ void Board::update_board() {
 
 void Board::update_board_smooth() {
     double n, m;
-    int *points = (int*) malloc(sizeof(int) * R_A * R_A * 4 * 2);
+    int *points = (int*) malloc(sizeof(int) * r_a * r_a * 4 * 2);
     int x, y, num_n, num_m;
     //iterate over every cell
     for(int j = 0; j < CELL_HEIGHT; j++) {
         for(int i = 0; i < CELL_WIDTH; i++) {
-            get_circle(i, j, R_I, points);
+            get_circle(i, j, r_i, points);
             x = 0;
             y = 1;
             n = 0;
@@ -191,7 +201,7 @@ void Board::update_board_smooth() {
                 x += 2;
                 y += 2;
             }
-            get_circle(i, j, R_A, points);
+            get_circle(i, j, r_a, points);
             x = 0;
             y = 1;
             m = 0;
@@ -206,12 +216,16 @@ void Board::update_board_smooth() {
             num_m = num_m - num_n;
             n = n / num_n;
             m = m / num_m;
-            board_buffer_float[j*CELL_WIDTH+i] = s(n, m);
-            if(board_buffer_float[j*CELL_WIDTH+i] < 0.01) {
-                board_buffer[j*CELL_WIDTH + i] = 0;
+            double new_val = s(n, m);
+            board_buffer_float[j*CELL_WIDTH+i] = new_val;
+            if(new_val < 0.01 && board_float[j*CELL_WIDTH+i] < 0.01) {
+                board_buffer[j*CELL_WIDTH + i]--;
+            }
+            else if (new_val >= 0.01 && board_float[j*CELL_WIDTH+i] >= 0.01) {
+                board_buffer[j*CELL_WIDTH + i]++;
             }
             else {
-                board_buffer[j*CELL_WIDTH + i] = board_buffer_float[j*CELL_WIDTH+i] * 256;
+                board_buffer[j*CELL_WIDTH + i] = 0;
             }
         }
     }
@@ -230,15 +244,15 @@ double Board::s1(double x, double a, double alpha) {
     return to_return;
 }
 double Board::s2(double x, double a, double b) {
-    double to_return = s1(x, a, ALPHA_N) * (1 - s1(x, b, ALPHA_N));
+    double to_return = s1(x, a, alpha_n) * (1 - s1(x, b, alpha_n));
     return to_return;
 }
 double Board::sm(double x, double y, double m) {
-    double to_return = x * (1 - s1(m, 0.5, ALPHA_M)) + y * s1(m, 0.5, ALPHA_M);
+    double to_return = x * (1 - s1(m, 0.5, alpha_m)) + y * s1(m, 0.5, alpha_m);
     return to_return;
 }
 double Board::s(double n, double m) {
-    double to_return = s2(n, sm(B1, D1, m), sm(B2, D2, m));
+    double to_return = s2(n, sm(b1, d1, m), sm(b2, d2, m));
     return to_return;
 }
 
@@ -336,10 +350,10 @@ void Board::update_colors() {
         for(int i = 0; i < CELL_WIDTH; i++) {
             //increase age if alive
             if(board[j*CELL_WIDTH+i] > 0)
-                board[j*CELL_WIDTH+i]++;
+                board_buffer[j*CELL_WIDTH+i] = board[j*CELL_WIDTH+i] + 1;
             //and increase age if dead and supposed to change
             else if(board[j*CELL_WIDTH+i] < 0)
-                board[j*CELL_WIDTH+i]--;
+                board_buffer[j*CELL_WIDTH+i] = board[j*CELL_WIDTH+i] - 1;
         }
     }
 }
@@ -367,6 +381,10 @@ int* Board::get_board() {
     return board;
 }
 
+double* Board::get_board_float() {
+    return board_float;
+}
+
 void Board::randomize_rules() {
     for(int i = 0; i < 9; i++) {
         born[i] = (rand()%100>20 ? 1 : 0);
@@ -381,6 +399,18 @@ void Board::randomize_rules_non_deterministic() {
         born[i] = (rand()%100>20 ? ndist(e2) : 0);
         stay_alive[i] = (rand()%100>10 ? 1 : 0);
     }
+}
+
+void Board::randomize_rules_smooth() {
+    std::normal_distribution<> ndist(0.01, 1.0);
+    r_a = (ndist(e2)+1) * 15;
+    r_i = r_a / ((ndist(e2) + 0.5)*3);
+    alpha_n = ndist(e2)/5;
+    alpha_m = ndist(e2)/5;
+    b1 = ndist(e2)/2 * 0.1;
+    b2 = b1 + ndist(e2)/3;
+    d1 = ndist(e2)/2 * 0.1;
+    d2 = b1 + ndist(e2)/3;
 }
 
 void Board::set_density(int new_density) {
@@ -432,19 +462,20 @@ void Board::rules_not_pretty_float() {
 }
 
 void Board::get_circle(int x, int y, int r, int* points) {
-    int *to_return = (int*) malloc(sizeof(int) * r * r * 4 * 2); //approximate pi*r*r
     int index = 0;
     int test_x, test_y;
     int rsquared = r*r;
     for(int i = -r; i <= r; i++) {
-        for(int j = -r; j <= r; j++) {
-            test_x = i + x;
-            test_y = j + y;
-            if(test_x < 0)
-                test_x += CELL_WIDTH;
-            else if(test_x >= CELL_WIDTH)
-                test_x -= CELL_WIDTH;
+        test_x = i + x;
+        if(test_x < 0)
+            test_x += CELL_WIDTH;
+        else if(test_x >= CELL_WIDTH)
+            test_x -= CELL_WIDTH;
 
+        //int yspan = r*sin(acos(-i/r));
+        //for(int j = -yspan; j <= yspan; j++) {
+        for(int j = -r; j <= r; j++) {
+            test_y = j + y;
             if(test_y < 0)
                 test_y += CELL_HEIGHT;
             else if(test_y >= CELL_HEIGHT)

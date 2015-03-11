@@ -64,6 +64,10 @@ bool do_user_input(Board *board, Screen *screen) {
                         board->randomize_rules();
                         screen->reset_colors();
                         break;
+                    case SDLK_j:
+                        board->randomize_rules_smooth();
+                        board->init_smooth_life();
+                        break;
                     //randomizes the cellular automata ruleset with nondeterministic behavior
                     case SDLK_r:
                         board->randomize_rules_non_deterministic();
@@ -100,12 +104,13 @@ bool do_user_input(Board *board, Screen *screen) {
                     //set board to normal automata
                     case SDLK_n:
                         board->set_update_algorithm(0);
+                        screen->flip_draw_smooth();
                         break;
                     //set board to smooth automata
                     case SDLK_m:
                         board->set_update_algorithm(1);
                         board->init_smooth_life();
-                        screen->set_draw_colors(2);
+                        screen->flip_draw_smooth();
                         break;
                     // this changes the density of live cells that random scenes
                     // are generated with-> The integer is the percent alive cells

@@ -15,10 +15,10 @@
 #define R_A 24
 #define ALPHA_N 0.028
 #define ALPHA_M 0.147
-#define B1 0.278
+#define B1 0.2
 #define B2 0.365
-#define D1 0.365
-#define D2 0.549
+#define D1 0.3
+#define D2 0.5
 
 #define E_FIXED (2.71828*32768)
 
@@ -32,6 +32,7 @@ class Board {
         double *board_buffer_float;
         double *born;
         double *stay_alive;
+        double *smooth_rules;
         int density;
         int num_gliders;
         int update_algorithm;
@@ -39,6 +40,14 @@ class Board {
         bool pause;
         RuleGenerator gen;
 
+        double r_i;
+        double r_a;
+        double alpha_n;
+        double alpha_m;
+        double b1;
+        double b2;
+        double d1;
+        double d2;
 
         std::mt19937 e2;
         std::uniform_real_distribution<double> dist;
@@ -72,10 +81,13 @@ class Board {
         void update_colors();
 
         int* get_board();
+        double *get_board_float();
 
         void set_rules_to_life();
         void randomize_rules();
         void randomize_rules_non_deterministic();
+        void randomize_rules_smooth();
+
         void set_density(int new_density);
         void set_update_algorithm(int new_algorithm);
         void modify_gliders(int factor);

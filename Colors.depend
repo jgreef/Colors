@@ -3,7 +3,7 @@
 	<SDL2/SDL.h>
 	<stdio.h>
 
-1426062754 source:c:\users\llamanaru\programming\colors\main.cpp
+1426082108 source:c:\users\llamanaru\programming\colors\main.cpp
 	<iostream>
 	<time.h>
 	<SDL2/SDL.h>
@@ -16,10 +16,10 @@
 	<time.h>
 	<SDL2/SDL.h>
 
-1426062727 source:c:\users\llamanaru\programming\colors\board.cpp
+1426081986 source:c:\users\llamanaru\programming\colors\board.cpp
 	"board.h"
 
-1426063398 c:\users\llamanaru\programming\colors\board.h
+1426082345 c:\users\llamanaru\programming\colors\board.h
 	<stdlib.h>
 	<random>
 	<time.h>
@@ -29,10 +29,10 @@
 
 1423088774 c:\users\llamanaru\programming\colors\info.h
 
-1426061663 source:c:\users\llamanaru\programming\colors\screen.cpp
+1426082654 source:c:\users\llamanaru\programming\colors\screen.cpp
 	"screen.h"
 
-1426059059 c:\users\llamanaru\programming\colors\screen.h
+1426073044 c:\users\llamanaru\programming\colors\screen.h
 	<SDL2/SDL.h>
 	<stdlib.h>
 	<iostream>
