@@ -105,6 +105,7 @@ bool do_user_input(Board *board, Screen *screen) {
                     case SDLK_m:
                         board->set_update_algorithm(1);
                         board->init_smooth_life();
+                        screen->set_draw_colors(2);
                         break;
                     // this changes the density of live cells that random scenes
                     // are generated with-> The integer is the percent alive cells
@@ -224,7 +225,6 @@ int main(int argc, char * arg[])
     //teststuff();
     //return 0;
     Board board;
-    board.init_circle();
     //return 0;
     Screen screen(&board);
 

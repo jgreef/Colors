@@ -25,7 +25,7 @@ Screen::Screen(Board *new_board) {
     screen = SDL_GetWindowSurface(window);
     pixels = (Uint32*)screen->pixels;
 
-    draw_colors = true;
+    draw_colors = 0;
     alive_offset = 0;
     dead_offset = 0;
     color_speed_divisor = 1;
@@ -61,7 +61,7 @@ void Screen::draw_board() {
     int *board = board_obj->get_board();
 
     //if we're drawing in color
-    if(draw_colors) {
+    if(draw_colors == 0) {
         //go over the entire board
         for(int j = 0; j < CELL_HEIGHT; j++) {
             for(int i = 0; i < CELL_WIDTH; i++) {
@@ -74,7 +74,7 @@ void Screen::draw_board() {
         }
     }
     //if we're doing black and white
-    else {
+    else if(draw_colors == 1) {
         //iterate over the whole board
         for(int j = 0; j < CELL_HEIGHT; j++) {
             for(int i = 0; i < CELL_WIDTH; i++) {
@@ -84,6 +84,15 @@ void Screen::draw_board() {
                 //and black if dead
                 else
                     set_pixel(i, j, 0x000000);
+            }
+        }
+    }
+    else if(draw_colors == 2) {
+        int color;
+        for(int j = 0; j < CELL_HEIGHT; j++) {
+            for(int i = 0; i < CELL_WIDTH; i++) {
+                color =board[j*CELL_WIDTH+i];
+                set_pixel(i, j, color | color << 8 | color << 16);
             }
         }
     }
@@ -99,6 +108,10 @@ void Screen::reset_colors() {
 
 void Screen::flip_draw_colors() {
     draw_colors = !draw_colors;
+}
+
+void Screen::set_draw_colors(int new_colors) {
+    draw_colors = new_colors;
 }
 
 void Screen::set_color_speed_divisor(uint8_t new_color_speed_divisor) {

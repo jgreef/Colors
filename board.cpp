@@ -4,6 +4,8 @@
 Board::Board() : gen(8), e2(time(NULL)), dist(0, 1) {
     board = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
     board_buffer = (int*)malloc(sizeof(int) * CELL_WIDTH * CELL_HEIGHT);
+    board_float = (double*)malloc(sizeof(double) * CELL_WIDTH * CELL_HEIGHT);
+    board_buffer_float = (double*)malloc(sizeof(double) * CELL_WIDTH * CELL_HEIGHT);
     born = (double*)malloc(sizeof(double) * 18);
     stay_alive = (born+9);
     density = 50;
@@ -73,7 +75,8 @@ void Board::init_center_dot() {
 void Board::init_smooth_life() {
     for(int i = 0; i < CELL_WIDTH; i++) {
         for(int j = 0; j < CELL_HEIGHT; j++) {
-            board[j*CELL_WIDTH+i] = (rand()%100 < density ? SMOOTH_MAX : 0);
+            board_float[j*CELL_WIDTH+i] = (rand()%100 < density ? 1 : 0);
+            board[j*CELL_WIDTH+i] = 0;
         }
     }
 }
@@ -124,7 +127,9 @@ void Board::make_glider(int x, int y, int orientation) {
 }
 
 void Board::init_circle() {
-    int* circle_coords = get_circle(rand()%CELL_WIDTH, rand()%CELL_HEIGHT-10, rand()%30+3);
+    int r = rand()%30+3;
+    int* circle_coords = (int*)malloc(sizeof(int) * r * r * 4 * 2);
+    get_circle(rand()%CELL_WIDTH, rand()%CELL_HEIGHT-10, r, circle_coords);
     int index = 0;
     int i, j;
     while(circle_coords[index] != -1) {
@@ -169,60 +174,71 @@ void Board::update_board() {
 }
 
 void Board::update_board_smooth() {
-    long n, m;
-    int *points, x, y, num_n, num_m;
+    double n, m;
+    int *points = (int*) malloc(sizeof(int) * R_A * R_A * 4 * 2);
+    int x, y, num_n, num_m;
     //iterate over every cell
     for(int j = 0; j < CELL_HEIGHT; j++) {
         for(int i = 0; i < CELL_WIDTH; i++) {
-            points = get_circle(i, j, R_I);
+            get_circle(i, j, R_I, points);
             x = 0;
             y = 1;
             n = 0;
             num_n = 0;
             while(points[x] != -1) {
-                n += board[points[y]*CELL_WIDTH+points[x]];
-                num_n ++;
+                n += board_float[points[y]*CELL_WIDTH+points[x]];
+                num_n++;
                 x += 2;
                 y += 2;
             }
-            free(points);
-            points = get_circle(i, j, R_A);
+            get_circle(i, j, R_A, points);
             x = 0;
             y = 1;
             m = 0;
             num_m = 0;
             while(points[x] != -1) {
-                m += board[points[y]*CELL_WIDTH+points[x]];
-                num_m ++;
+                m += board_float[points[y]*CELL_WIDTH+points[x]];
+                num_m++;
                 x += 2;
                 y += 2;
             }
-            free(points);
             m = m - n;
             num_m = num_m - num_n;
             n = n / num_n;
             m = m / num_m;
-            board_buffer[j*CELL_WIDTH+i] = s(n, m);
+            board_buffer_float[j*CELL_WIDTH+i] = s(n, m);
+            if(board_buffer_float[j*CELL_WIDTH+i] < 0.01) {
+                board_buffer[j*CELL_WIDTH + i] = 0;
+            }
+            else {
+                board_buffer[j*CELL_WIDTH + i] = board_buffer_float[j*CELL_WIDTH+i] * 256;
+            }
         }
     }
-
+    free(points);
+    //free our old board
+    free(board_float);
+    //put the buffer into the spotlight
+    board_float = board_buffer_float;
+    //and get a new buffer
+    board_buffer_float = (double*)malloc(sizeof(double) * CELL_WIDTH * CELL_HEIGHT);
 
 }
 
-long Board::s1(long x, long a) {
-    long to_return = (SMOOTH_MAX * (SMOOTH_MAX + 1))/(SMOOTH_MAX + pow(E_FIXED, (a-x) * 4));
+double Board::s1(double x, double a, double alpha) {
+    double to_return = 1/(1 + exp(((a-x) * 4)/alpha));
     return to_return;
 }
-long Board::s2(long x, long a, long b) {
-    long to_return = s1(x, a) * (SMOOTH_MAX - s1(x, b));
+double Board::s2(double x, double a, double b) {
+    double to_return = s1(x, a, ALPHA_N) * (1 - s1(x, b, ALPHA_N));
     return to_return;
 }
-long Board::sm(long x, long y, long m) {
-    long to_return = x * (SMOOTH_MAX - s1(m, SMOOTH_MAX/2)) + y * s1(m, SMOOTH_MAX/2);
+double Board::sm(double x, double y, double m) {
+    double to_return = x * (1 - s1(m, 0.5, ALPHA_M)) + y * s1(m, 0.5, ALPHA_M);
     return to_return;
 }
-long Board::s(long n, long m) {
-    long to_return = s2(n, sm(B1, D1, m), sm(B2, D2, m));
+double Board::s(double n, double m) {
+    double to_return = s2(n, sm(B1, D1, m), sm(B2, D2, m));
     return to_return;
 }
 
@@ -415,7 +431,7 @@ void Board::rules_not_pretty_float() {
     init_center_dot();
 }
 
-int* Board::get_circle(int x, int y, int r) {
+void Board::get_circle(int x, int y, int r, int* points) {
     int *to_return = (int*) malloc(sizeof(int) * r * r * 4 * 2); //approximate pi*r*r
     int index = 0;
     int test_x, test_y;
@@ -436,14 +452,13 @@ int* Board::get_circle(int x, int y, int r) {
 
 
             if(i * i + j * j <= rsquared) {
-                to_return[index] = test_x;
+                points[index] = test_x;
                 index++;
-                to_return[index] = test_y;
+                points[index] = test_y;
                 index++;
             }
 
         }
     }
-    to_return[index] = -1;
-    return to_return;
+    points[index] = -1;
 }

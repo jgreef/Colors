@@ -11,13 +11,14 @@
 
 #define SMOOTH_MAX RAND_MAX
 
-#define R_I 7
-#define R_A 21
-#define ALPHA 32767
-#define B1 2345
-#define B2 9822
-#define D1 10000
-#define D2 20000
+#define R_I 8
+#define R_A 24
+#define ALPHA_N 0.028
+#define ALPHA_M 0.147
+#define B1 0.278
+#define B2 0.365
+#define D1 0.365
+#define D2 0.549
 
 #define E_FIXED (2.71828*32768)
 
@@ -27,6 +28,8 @@ class Board {
     private:
         int *board;
         int *board_buffer;
+        double *board_float;
+        double *board_buffer_float;
         double *born;
         double *stay_alive;
         int density;
@@ -40,14 +43,14 @@ class Board {
         std::mt19937 e2;
         std::uniform_real_distribution<double> dist;
 
-        int* get_circle(int x, int y, int r);
+        void get_circle(int x, int y, int r, int* points);
 
         void update_board_normal();
         void update_board_smooth();
-        long s1(long x, long a);
-        long s2(long x, long a, long b);
-        long sm(long x, long y, long m);
-        long s(long n, long m);
+        double s1(double x, double a, double alpha);
+        double s2(double x, double a, double b);
+        double sm(double x, double y, double m);
+        double s(double n, double m);
     public:
         Board();
         ~Board();

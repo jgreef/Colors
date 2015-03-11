@@ -12,7 +12,7 @@
 
 class Screen {
     private:
-        bool draw_colors;
+        int draw_colors;
         int alive_offset;
         int dead_offset;
         uint8_t color_speed_divisor;
@@ -26,6 +26,7 @@ class Screen {
         void draw_board();
         void reset_colors();
         void flip_draw_colors();
+        void set_draw_colors(int new_colors);
         void set_color_speed_divisor(uint8_t new_color_speed_divisor);
         void update_window();
 };
