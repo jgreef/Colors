@@ -1,26 +1,29 @@
 #ifndef BOARD_H_INCLUDED
 #define BOARD_H_INCLUDED
 
+
 #include <stdlib.h>
 #include <random>
 #include <time.h>
 #include <math.h>
+#include <iostream>
+#include <algorithm>
 
 #include "info.h"
 #include "RuleGenerator.h"
 
 #define SMOOTH_MAX RAND_MAX
 
-#define R_I 8
-#define R_A 24
+#define R_I 7
+#define R_A 21
 #define ALPHA_N 0.028
 #define ALPHA_M 0.147
 #define B1 0.2
 #define B2 0.365
-#define D1 0.3
-#define D2 0.5
+#define D1 0.30
+#define D2 0.549
 
-#define E_FIXED (2.71828*32768)
+#define PI 3.14159265359
 
 
 
@@ -53,6 +56,9 @@ class Board {
         std::uniform_real_distribution<double> dist;
 
         void get_circle(int x, int y, int r, int* points);
+        void get_polygon(int x, int y, int mag, int dim, float irreg, int* points);
+
+        void get_mathy_triangle2(int x, int y, int mag, int* points);
 
         void update_board_normal();
         void update_board_smooth();
@@ -68,7 +74,11 @@ class Board {
         void init_center_dot();
         void init_gliders();
         void init_circle();
+        void init_triangle();
         void init_smooth_life();
+        void init_square_shell();
+        void init_circle_shell();
+        void init_triangle_shell();
 
         void make_glider(int x, int y, int orientation);
         void clear_board();
@@ -99,6 +109,8 @@ class Board {
 
         void rules_pretty_float();
         void rules_not_pretty_float();
+
+        void print_rules();
 };
 
 

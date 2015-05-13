@@ -79,6 +79,12 @@ bool do_user_input(Board *board, Screen *screen) {
                         screen->reset_colors();
                         break;
                     //draws num_gliders/4 dots of side length density/10 symmetrically in each quadrant
+                    case SDLK_w:
+                        board->init_circle_shell();
+                        break;
+                    case SDLK_t:
+                        board->init_triangle_shell();
+                        break;
                     case SDLK_e:
                         board->init_quadrants();
                         break;
@@ -93,6 +99,9 @@ bool do_user_input(Board *board, Screen *screen) {
                     //makes a center square of side length density/10
                     case SDLK_a:
                         board->init_center_dot();
+                        break;
+                    case SDLK_s:
+                        board->init_square_shell();
                         break;
                     //toggles between having the background
                     case SDLK_v:
@@ -112,10 +121,14 @@ bool do_user_input(Board *board, Screen *screen) {
                         board->init_smooth_life();
                         screen->flip_draw_smooth();
                         break;
+                    case SDLK_p:
+                        board->print_rules();
+                        break;
+
                     // this changes the density of live cells that random scenes
                     // are generated with-> The integer is the percent alive cells
                     case SDLK_0:
-                        board->set_density(1);
+                        board->set_density(0);
                         break;
                     case SDLK_1:
                         board->set_density(10);
@@ -233,6 +246,8 @@ int main(int argc, char * arg[])
     //return 0;
     Screen screen(&board);
 
+    board.init_board();
+    board.set_update_algorithm(0);
     board.init_board();
 
     bool running = true;

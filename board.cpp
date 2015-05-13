@@ -101,6 +101,77 @@ void Board::init_gliders() {
     }
 }
 
+void Board::init_square_shell() {
+    clear_board();
+    int center_x = CELL_WIDTH/2;
+    int center_y = CELL_HEIGHT/2;
+    int side_length = rand() %(CELL_HEIGHT/2 -1) + 1;
+    for(int i = center_x - side_length; i < center_x + side_length; i++) {
+        for(int j = center_y - side_length; j < center_y + side_length; j++) {
+            board[j*CELL_WIDTH+i] = 1;
+
+        }
+    }
+    side_length--;
+    for(int i = center_x - side_length; i < center_x + side_length; i++) {
+        for(int j = center_y - side_length; j < center_y + side_length; j++) {
+            board[j*CELL_WIDTH+i] = changing_background ? -1:0;
+
+        }
+    }
+}
+
+void Board::init_circle_shell() {
+    clear_board();
+    int r = rand() % (CELL_HEIGHT/2 -1) + 1;
+    int center_x = CELL_WIDTH/2;
+    int center_y = CELL_HEIGHT/2;
+    int* circle_coords = (int*)malloc(sizeof(int) * r * r * 4 * 2);
+    get_circle(center_x, center_y, r, circle_coords);
+    int index = 0;
+    int i, j;
+    while(circle_coords[index] != -1) {
+        i = circle_coords[index];
+        index++;
+        j = circle_coords[index];
+        index++;
+
+        board[j*CELL_WIDTH+i] = 1;
+    }
+    r--;
+    index = 0;
+    get_circle(center_x, center_y, r, circle_coords);
+    while(circle_coords[index] != -1) {
+        i = circle_coords[index];
+        index++;
+        j = circle_coords[index];
+        index++;
+
+        board[j*CELL_WIDTH+i] = changing_background ? -1:0;
+    }
+    free(circle_coords);
+}
+
+void Board::init_triangle_shell() {
+    clear_board();
+    int mag = 20 + rand() % 50;// rand() % (CELL_HEIGHT/8 -1) + 1;
+    int* coords = (int*)malloc(2* sizeof(int) *CELL_HEIGHT * CELL_WIDTH);
+    get_polygon(CELL_WIDTH/2, CELL_HEIGHT/2, mag, num_gliders, 0, coords);
+    int index = 0;
+    int i, j;
+    while(coords[index] != -1) {
+        i = coords[index];
+        index++;
+        j = coords[index];
+        index++;
+
+        board[j*CELL_WIDTH+i] = 1;
+    }
+    return;
+
+
+
+}
 
 //this function creates a glider on board at x,y in one of 4 orientations.
 //it just manually sets each required alive cell. Assumes that all cells are
@@ -150,6 +221,24 @@ void Board::init_circle() {
 
         board[j*CELL_WIDTH+i] = 1;
     }
+    free(circle_coords);
+}
+
+void Board::init_triangle() {
+    int mag = rand()%30+10;
+    int* coords = (int*)malloc(2* sizeof(int) *CELL_HEIGHT * CELL_WIDTH);
+    get_mathy_triangle2(CELL_WIDTH/2, CELL_HEIGHT/2, mag, coords);
+    int index = 0;
+    int i, j;
+    while(coords[index] != -1) {
+        i = coords[index];
+        index++;
+        j = coords[index];
+        index++;
+
+        board[j*CELL_WIDTH+i] = 1;
+    }
+    free(coords);
 }
 
 
@@ -184,13 +273,21 @@ void Board::update_board() {
 }
 
 void Board::update_board_smooth() {
-    double n, m;
+    double n, m, r, rr;
     int *points = (int*) malloc(sizeof(int) * r_a * r_a * 4 * 2);
-    int x, y, num_n, num_m;
+    int x, y, test_x, test_y, num_m, num_n;
+    double r_a_2 = r_a*r_a;
+    double r_i_2 = r_i*r_i;
+    //squares (m)inus b
+    double r_a_2_m_b = (r_a-0.5)*(r_a-0.5);
+    double r_i_2_m_b = (r_i-0.5)*(r_i-0.5);
+    //squares (p)lus b
+    double r_a_2_p_b = (r_a+0.5)*(r_a+0.5);
+    double r_i_2_p_b = (r_i+0.5)*(r_i+0.5);
     //iterate over every cell
     for(int j = 0; j < CELL_HEIGHT; j++) {
         for(int i = 0; i < CELL_WIDTH; i++) {
-            get_circle(i, j, r_i, points);
+            /*get_circle(i, j, r_i, points);
             x = 0;
             y = 1;
             n = 0;
@@ -211,11 +308,59 @@ void Board::update_board_smooth() {
                 num_m++;
                 x += 2;
                 y += 2;
+            }*/
+            n = 0;
+            m = 0;
+            num_n = 0;
+            num_m = 0;
+            for(y = -r_a; y <= r_a; y++) {
+                test_y = j + y;
+                if(test_y < 0)
+                    test_y += CELL_HEIGHT;
+                else if(test_y >= CELL_HEIGHT)
+                    test_y -= CELL_HEIGHT;
+
+                for(x = -r_a; x <= r_a; x++) {
+                    test_x = i + x;
+                    if(test_x < 0)
+                        test_x += CELL_WIDTH;
+                    else if(test_x >= CELL_WIDTH)
+                        test_x -= CELL_WIDTH;
+
+                //int yspan = r*sin(acos(-i/r));
+                //for(int j = -yspan; j <= yspan; j++) {
+
+                    rr = x*x + y*y;
+                    r = sqrt(rr);
+                    if(rr <= r_i_2_m_b) {
+                        n += board_float[test_y*CELL_WIDTH+test_x];
+                    }
+                    else if(rr <= r_i_2_p_b) {
+                        n += (r_i+0.5-r)*board_float[test_y*CELL_WIDTH+test_x];
+                    }
+
+                    if(rr <= r_a_2_m_b && rr >= r_i_2_p_b) {
+                        m += board_float[test_y*CELL_WIDTH+test_x];
+                    }
+                    else if(rr <= r_a_2_p_b && rr >= r_a_2_m_b) {
+                        m += (r_a+0.5-r)*board_float[test_y*CELL_WIDTH+test_x];
+                    }
+                    else if(rr <= r_i_2_p_b && rr >= r_i_2_m_b) {
+                        m += (r_a+0.5-r)*board_float[test_y*CELL_WIDTH+test_x];
+                    }
+
+                }
             }
-            m = m - n;
-            num_m = num_m - num_n;
-            n = n / num_n;
-            m = m / num_m;
+
+            //std::cout << "n " << n << std::endl;
+            //std::cout << "m " << m << std::endl;
+            //m = m - n;
+            //num_m = num_m - num_n;
+            n = n / (r_i_2 * PI);
+            m = m / (PI * (r_a_2 - r_i_2));
+            //n = n / num_n;
+            //m = m / num_m;
+
             double new_val = s(n, m);
             board_buffer_float[j*CELL_WIDTH+i] = new_val;
             if(new_val < 0.01 && board_float[j*CELL_WIDTH+i] < 0.01) {
@@ -361,8 +506,16 @@ void Board::update_colors() {
 
 void Board::set_rules_to_life() {
     //initial rules for the automata is game of life
-    int life_born[9] = {0,0,0,1,0,0,0,0,0};
-    int life_stay_alive[9] = {0,0,1,1,0,0,0,0,0};
+    //int life_born[9] =       {0,1,1,1,1,0,0,1,0};
+    //int life_stay_alive[9] = {0,1,1,0,0,1,1,1,1};
+    //copier
+    //int life_born[9] =       {0,1,0,1,0,1,0,1,0};
+    //int life_stay_alive[9] = {0,1,0,1,0,1,0,1,0};
+    //vote
+    int life_born[9] =       {0,0,0,0,1,0,1,1,1};
+    int life_stay_alive[9] = {0,0,0,1,0,1,1,1,1};
+    //float life_born[9] =       {-.0224982,-0.0439246,0.16508,-0.381114,0.0156361,0.254988,0.354988,0.2501,0.31466};
+    //float life_stay_alive[9] = {1,1,1,1,1,1,1,1,1};
 
     free(born);
 
@@ -377,6 +530,8 @@ void Board::set_rules_to_life() {
 
 }
 
+// 0 1 1 1 1 0 0 1 0
+// 1 1 1 0 0 1 1 1 1c
 int* Board::get_board() {
     return board;
 }
@@ -423,6 +578,8 @@ void Board::set_update_algorithm(int new_algorithm) {
 
 void Board::modify_gliders(int factor) {
     num_gliders += factor;
+    if(num_gliders < 2)
+        num_gliders = 2;
 }
 
 void Board::toggle_changing_background() {
@@ -461,6 +618,116 @@ void Board::rules_not_pretty_float() {
     init_center_dot();
 }
 
+void Board::get_mathy_triangle2(int center_x, int center_y, int mag, int* points) {
+    int index = 0;
+    std::uniform_real_distribution<> udist(-PI, PI);
+    std::uniform_real_distribution<> udist2(0.45*PI, 0.65*PI);
+
+    float theta = udist(e2);
+
+    float v1[2] = {std::sin(theta), std::cos(theta)};
+
+    theta = theta + udist2(e2);
+    float v2[2] = {std::sin(theta), std::cos(theta)};
+
+
+    float v3[2] = {-1*(v1[0]+v2[0]), -1*(v1[1]+v2[1])};
+
+    float norm_factor = v3[0]*v3[0] + v3[1]*v3[1];
+    v3[0] = v3[0] / norm_factor;
+    v3[1] = v3[1] / norm_factor;
+
+
+    for(int i = 0; i < CELL_WIDTH; i++) {
+        for(int j = 0; j < CELL_HEIGHT; j++) {
+            float x = i-center_x;
+            float y = j-center_y;
+
+            bool inside = true;
+            inside = inside && (x*v1[0] + y*v1[1]) < mag;
+            inside = inside && (x*v2[0] + y*v2[1]) < mag;
+            inside = inside && (x*v3[0] + y*v3[1]) < mag;
+            if(inside) {
+                points[index] = i;
+                index++;
+                points[index] = j;
+                index++;
+            }
+
+        }
+    }
+    points[index] = -1;
+}
+
+
+void Board::get_polygon(int center_x, int center_y, int mag, int dim, float irreg, int* points) {
+    int index = 0;
+
+
+    std::uniform_real_distribution<> udist(-PI, PI);
+    std::uniform_real_distribution<> udist2((1-irreg)* 2*PI/dim, (1+irreg)*2*PI/dim);
+
+
+    float **v = (float**)malloc(sizeof(float*)*dim);
+
+    float x_sum = 0, y_sum = 0;
+    float theta = udist(e2);
+
+    int k;
+    for(k = 0; k < dim - 1; k++) {
+        theta += udist2(e2);
+        v[k] = (float*)malloc(sizeof(float) * 2);
+        v[k][0] = std::cos(theta);
+        v[k][1] = std::sin(theta);
+        x_sum += v[k][0];
+        y_sum += v[k][1];
+
+    }
+    v[k] = (float*)malloc(sizeof(float) * 2);
+    v[k][0] = -1*x_sum;
+    v[k][1] = -1*y_sum;
+
+    float norm_factor = v[k][0]*v[k][0] + v[k][1]*v[k][1];
+    v[k][0] = v[k][0] / norm_factor;
+    v[k][1] = v[k][1] / norm_factor;
+
+
+
+
+    for(int i = 0; i < CELL_WIDTH; i++) {
+        for(int j = 0; j < CELL_HEIGHT; j++) {
+            float x = i-center_x;
+            float y = j-center_y;
+
+            bool inside1 = true;
+            bool inside2 = false;
+            for(int k = 0; k < dim; k++) {
+                inside1 = inside1 && (x*v[k][0] + y*v[k][1]) < mag;
+                inside2 = inside2 || (x*v[k][0] + y*v[k][1]) > mag - 5;
+
+            }
+            if(inside1 && inside2) {
+                points[index] = i;
+                index++;
+                points[index] = j;
+                index++;
+            }
+            /*if(inside2) {
+                points2[index] = i;
+                index++;
+                points2[index] = j;
+                index++;
+            }*/
+
+
+        }
+    }
+    points[index] = -1;
+}
+
+
+
+
 void Board::get_circle(int x, int y, int r, int* points) {
     int index = 0;
     int test_x, test_y;
@@ -492,4 +759,17 @@ void Board::get_circle(int x, int y, int r, int* points) {
         }
     }
     points[index] = -1;
+}
+
+void Board::print_rules() {
+    for(int i = 0; i < 9; i++) {
+        std::cout << born[i] << " ";
+    }
+    std::cout << std::endl;
+    for(int i = 0; i < 9; i++) {
+        std::cout << stay_alive[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << std::endl;
+
 }
